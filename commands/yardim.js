@@ -1,20 +1,28 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder, EmbedBuilder } = require('discord.js');
 
 module.exports = {
     data: new SlashCommandBuilder()
         .setName('yardim')
-        .setDescription('Botun tüm komutlarını gösterir.'),
+        .setDescription('Komutları seçerek görebileceğiniz etkileşimli yardım menüsü'),
+    
     async execute(interaction) {
         const embed = new EmbedBuilder()
             .setTitle('ATATÜRK Bot Komutları')
             .setColor(0x1abc9c)
-            .addFields(
-                { name: '🎮 Oyun Komutları', value: '`/oyun liste`' },
-                { name: '🌈 Renk Komutları', value: '`/renk liste`' },
-                { name: '🔊 Ses Komutları', value: '`/ses baglan`, `/ses cik`' }
-            )
-            .setFooter({ text: 'ATATÜRK Bot © 2025' });
+            .setDescription('Aşağıdaki menüden bir kategori seçin.');
 
-        await interaction.reply({ embeds: [embed] });
+        const row = new ActionRowBuilder()
+            .addComponents(
+                new StringSelectMenuBuilder()
+                    .setCustomId('yardim_menu')
+                    .setPlaceholder('Bir kategori seç...')
+                    .addOptions([
+                        { label: 'Oyun Komutları', value: 'oyun' },
+                        { label: 'Renk Komutları', value: 'renk' },
+                        { label: 'Ses Komutları', value: 'ses' }
+                    ])
+            );
+
+        await interaction.reply({ embeds: [embed], components: [row] });
     },
 };
