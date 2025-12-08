@@ -76,25 +76,6 @@ client.on("interactionCreate", async interaction => {
         }
     }
 });
-// Select menu
-    else if (interaction.isStringSelectMenu()) {
-        if (interaction.customId === "yardim_menu") {
-            let embed;
-            switch (interaction.values[0]) {
-                case "oyun":
-                    embed = { title: "🎮 Oyun Komutları", description: "`/oyun liste`", color: 0x1abc9c };
-                    break;
-                case "renk":
-                    embed = { title: "🌈 Renk Komutları", description: "`/renk liste`", color: 0x1abc9c };
-                    break;
-                case "ses":
-                    embed = { title: "🔊 Ses Komutları", description: "`/ses baglan`, `/ses cik`", color: 0x1abc9c };
-                    break;
-            }
-            await interaction.update({ embeds: [embed] });
-        }
-    }
-});
 
 // Prefix komutlar
 client.on("messageCreate", async message => {
