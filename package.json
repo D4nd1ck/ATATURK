@@ -1,0 +1,17 @@
+{
+  "name": "atatürk-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "deploy": "node deploy.js"
+  },
+  "dependencies": {
+    "discord.js": "^14.15.2",
+    "@discordjs/voice": "^0.16.1",
+    "dotenv": "^16.3.1",
+    "yt-search": "^2.10.6",
+    "play-dl": "^1.9.7"
+  }
+}
