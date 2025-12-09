@@ -26,11 +26,11 @@ module.exports = {
                     .setStyle("SECONDARY")
             );
 
-        await message.channel.send({ embeds: [embed], components: [row] });
+        const sentMessage = await message.channel.send({ embeds: [embed], components: [row] });
 
         // Buton tıklama listener
         const filter = i => ["oyun_btn", "renk_btn", "ses_btn"].includes(i.customId) && i.user.id === message.author.id;
-        const collector = message.channel.createMessageComponentCollector({ filter, time: 60000 }); // 1 dakika aktif
+        const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
 
         collector.on("collect", async i => {
             switch(i.customId) {
@@ -46,10 +46,13 @@ module.exports = {
             }
         });
 
-        collector.on("end", collected => {
-            // İsteğe bağlı: butonları pasifleştirebilirsiniz
-            row.components.forEach(btn => btn.setDisabled(true));
-            message.channel.send({ content: "Yardım menüsü süresi doldu.", components: [row] });
+        collector.on("end", () => {
+            // Butonları pasifleştir
+            const disabledRow = new MessageActionRow()
+                .addComponents(
+                    row.components.map(btn => btn.setDisabled(true))
+                );
+            sentMessage.edit({ components: [disabledRow] });
         });
     }
 };
