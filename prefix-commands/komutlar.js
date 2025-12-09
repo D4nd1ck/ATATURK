@@ -1,3 +1,5 @@
+const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
+
 // Prefix komutlar
 client.on("messageCreate", async message => {
     if (!message.content.startsWith(prefix) || message.author.bot) return;
@@ -9,6 +11,7 @@ client.on("messageCreate", async message => {
     if (!command) return;
 
     try {
+        // "yardim" komutu butonlu menüyü gönderir
         if (cmd === "yardim") {
             const embed = new MessageEmbed()
                 .setTitle("ATATÜRK Bot — Yardım Menüsü")
@@ -23,7 +26,7 @@ client.on("messageCreate", async message => {
                         .setStyle("PRIMARY"),
                     new MessageButton()
                         .setCustomId("renk_btn")
-                        .setLabel("🌈 Renk Komutları") // ✅ Renk butonu
+                        .setLabel("🌈 Renk Komutları")
                         .setStyle("SUCCESS"),
                     new MessageButton()
                         .setCustomId("ses_btn")
@@ -33,6 +36,7 @@ client.on("messageCreate", async message => {
 
             await message.channel.send({ embeds: [embed], components: [row] });
         } else {
+            // Diğer prefix komutlarını çalıştır
             await command.execute(message, args, client);
         }
     } catch (error) {
@@ -45,15 +49,19 @@ client.on("messageCreate", async message => {
 client.on("interactionCreate", async interaction => {
     if (!interaction.isButton()) return;
 
-    switch(interaction.customId) {
-        case "oyun_btn":
-            await interaction.reply({ content: "🎮 Oyun komutları: `/oyun liste`", ephemeral: true });
-            break;
-        case "renk_btn": // ✅ Renk butonu tıklama cevabı
-            await interaction.reply({ content: "🌈 Renk komutları: `/renk liste`", ephemeral: true });
-            break;
-        case "ses_btn":
-            await interaction.reply({ content: "🔊 Ses komutları: `/ses baglan`, `/ses cik`", ephemeral: true });
-            break;
+    try {
+        switch(interaction.customId) {
+            case "oyun_btn":
+                await interaction.reply({ content: `🎮 Oyun komutları: \`a!oyun liste\``, ephemeral: true });
+                break;
+            case "renk_btn":
+                await interaction.reply({ content: `🌈 Renk komutları: \`a!renk liste\``, ephemeral: true });
+                break;
+            case "ses_btn":
+                await interaction.reply({ content: `🔊 Ses komutları: \`a!ses baglan\`, \`a!ses cik\``, ephemeral: true });
+                break;
+        }
+    } catch (error) {
+        console.error(error);
     }
 });
