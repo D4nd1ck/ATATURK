@@ -1,5 +1,5 @@
 require("dotenv").config();
-const { Client, GatewayIntentBits, Collection } = require("discord.js");
+const { Client, GatewayIntentBits, Collection, MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 const fs = require("fs");
 const { prefix } = require("./config");
 
@@ -63,8 +63,16 @@ client.on("interactionCreate", async interaction => {
         } 
         // Button
         else if (interaction.isButton()) {
-            if (interaction.customId === 'ornek_buton') {
-                await interaction.reply({ content: "Butona tıkladın!", ephemeral: true });
+            switch(interaction.customId) {
+                case 'oyun_btn':
+                    await interaction.reply({ content: "🎮 Oyun komutları: `/oyun liste`", ephemeral: true });
+                    break;
+                case 'renk_btn':
+                    await interaction.reply({ content: "🌈 Renk komutları: `/renk liste`", ephemeral: true });
+                    break;
+                case 'ses_btn':
+                    await interaction.reply({ content: "🔊 Ses komutları: `/ses baglan`, `/ses cik`", ephemeral: true });
+                    break;
             }
         }
     } catch (error) {
@@ -88,7 +96,34 @@ client.on("messageCreate", async message => {
     if (!command) return;
 
     try {
-        await command.execute(message, args, client);
+        // Eğer prefix komutu "yardim" ise butonlu menü gönder
+        if (cmd === "yardim") {
+            const embed = new MessageEmbed()
+                .setTitle("ATATÜRK Bot — Yardım Menüsü")
+                .setColor("BLUE")
+                .setDescription("Aşağıdaki butonlardan bir kategori seçin.");
+
+            const row = new MessageActionRow()
+                .addComponents(
+                    new MessageButton()
+                        .setCustomId("oyun_btn")
+                        .setLabel("🎮 Oyun Komutları")
+                        .setStyle("PRIMARY"),
+                    new MessageButton()
+                        .setCustomId("renk_btn")
+                        .setLabel("🌈 Renk Komutları")
+                        .setStyle("SUCCESS"),
+                    new MessageButton()
+                        .setCustomId("ses_btn")
+                        .setLabel("🔊 Ses Komutları")
+                        .setStyle("SECONDARY")
+                );
+
+            await message.channel.send({ embeds: [embed], components: [row] });
+        } else {
+            // Diğer prefix komutlarını normal şekilde çalıştır
+            await command.execute(message, args, client);
+        }
     } catch (error) {
         console.error(error);
         message.reply("Komut çalıştırılırken bir hata oluştu!");
