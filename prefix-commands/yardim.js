@@ -1,4 +1,3 @@
-// ./prefix-commands/yardim.js
 const { MessageActionRow, MessageButton, MessageEmbed } = require("discord.js");
 
 module.exports = {
@@ -30,7 +29,7 @@ module.exports = {
 
         // Buton tıklama listener
         const filter = i => ["oyun_btn", "renk_btn", "ses_btn"].includes(i.customId) && i.user.id === message.author.id;
-        const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 });
+        const collector = sentMessage.createMessageComponentCollector({ filter, time: 60000 }); // 1 dakika aktif
 
         collector.on("collect", async i => {
             switch(i.customId) {
@@ -48,10 +47,9 @@ module.exports = {
 
         collector.on("end", () => {
             // Butonları pasifleştir
-            const disabledRow = new MessageActionRow()
-                .addComponents(
-                    row.components.map(btn => btn.setDisabled(true))
-                );
+            const disabledRow = new MessageActionRow().addComponents(
+                row.components.map(btn => btn.setDisabled(true))
+            );
             sentMessage.edit({ components: [disabledRow] });
         });
     }
