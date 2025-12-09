@@ -37,43 +37,68 @@ client.on("ready", () => {
 // Interaction handler (Slash + Select Menu + Button)
 client.on("interactionCreate", async interaction => {
     try {
-        // Slash komut
+        // 1️⃣ Slash komut
         if (interaction.isChatInputCommand()) {
             const cmd = client.commands.get(interaction.commandName);
             if (!cmd) return;
             await cmd.execute(interaction, client);
         } 
-        // Select Menu
+
+        // 2️⃣ Select Menu
         else if (interaction.isStringSelectMenu()) {
             if (interaction.customId === 'yardim_menu') {
                 let embed;
                 switch(interaction.values[0]) {
                     case 'oyun':
-                        embed = { title: '🎮 Oyun Komutları', description: '`/oyun liste`', color: 0x1abc9c };
+                        embed = new MessageEmbed()
+                            .setTitle('🎮 Oyun Komutları')
+                            .setDescription('`/oyun liste`')
+                            .setColor("BLUE");
                         break;
                     case 'renk':
-                        embed = { title: '🌈 Renk Komutları', description: '`/renk liste`', color: 0x1abc9c };
+                        embed = new MessageEmbed()
+                            .setTitle('🌈 Renk Komutları')
+                            .setDescription('`/renk liste`')
+                            .setColor("GREEN");
                         break;
                     case 'ses':
-                        embed = { title: '🔊 Ses Komutları', description: '`/ses baglan`, `/ses cik`', color: 0x1abc9c };
+                        embed = new MessageEmbed()
+                            .setTitle('🔊 Ses Komutları')
+                            .setDescription('`/ses baglan`, `/ses cik`')
+                            .setColor("RED");
                         break;
                 }
                 await interaction.update({ embeds: [embed] });
             }
         } 
-        // Button
+
+        // 3️⃣ Button handler (prefix yardim menüsü için)
         else if (interaction.isButton()) {
+            let embed;
             switch(interaction.customId) {
                 case 'oyun_btn':
-                    await interaction.reply({ content: "🎮 Oyun komutları: `/oyun liste`", ephemeral: true });
+                    embed = new MessageEmbed()
+                        .setTitle('🎮 Oyun Komutları')
+                        .setDescription('`a!oyun liste`')
+                        .setColor("BLUE");
                     break;
                 case 'renk_btn':
-                    await interaction.reply({ content: "🌈 Renk komutları: `/renk liste`", ephemeral: true });
+                    embed = new MessageEmbed()
+                        .setTitle('🌈 Renk Komutları')
+                        .setDescription('`a!renk liste`')
+                        .setColor("GREEN");
                     break;
                 case 'ses_btn':
-                    await interaction.reply({ content: "🔊 Ses komutları: `/ses baglan`, `/ses cik`", ephemeral: true });
+                    embed = new MessageEmbed()
+                        .setTitle('🔊 Ses Komutları')
+                        .setDescription('`a!ses baglan`, `a!ses cik`')
+                        .setColor("RED");
                     break;
+                default:
+                    return;
             }
+
+            await interaction.update({ embeds: [embed], components: [] }); // Butonları kaldırmak için components: []
         }
     } catch (error) {
         console.error(error);
@@ -93,10 +118,10 @@ client.on("messageCreate", async message => {
     const cmd = args.shift().toLowerCase();
 
     const command = client.prefixCommands.get(cmd);
-    if (!command) return;
+    if (!command && cmd !== "yardim") return;
 
     try {
-        // Eğer prefix komutu "yardim" ise butonlu menü gönder
+        // a!yardim komutu
         if (cmd === "yardim") {
             const embed = new MessageEmbed()
                 .setTitle("ATATÜRK Bot — Yardım Menüsü")
@@ -116,12 +141,11 @@ client.on("messageCreate", async message => {
                     new MessageButton()
                         .setCustomId("ses_btn")
                         .setLabel("🔊 Ses Komutları")
-                        .setStyle("SECONDARY")
+                        .setStyle("DANGER")
                 );
 
             await message.channel.send({ embeds: [embed], components: [row] });
         } else {
-            // Diğer prefix komutlarını normal şekilde çalıştır
             await command.execute(message, args, client);
         }
     } catch (error) {
